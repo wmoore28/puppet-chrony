@@ -6,6 +6,15 @@ server <%= server %> <%= @servers[server].join(' ') %>
 server <%= server %> iburst
 <% end end -%>
 
+<% if defined?(@initstepslew_seconds) -%>
+# Upon initial bootup, correct the time immediately (if its more than
+# <%= @initstepslew_seconds %> seconds), else use normal time slew
+<% if @initstepslew_servers.is_a?(Hash) then @initstepslew_servers.keys.sort.each do |server| -%>
+initstepslew <%= @initstepslew_seconds %> <%= server %> <%= @initstepslew_servers[server].join(' ') %>
+<% end else Array(@initstepslew_servers).each do |server| -%>
+initstepslew <%= @initstepslew_seconds %> <%= server %>
+<% end end end -%>
+
 # Ignore stratum in source selection.
 stratumweight 0
 
@@ -58,7 +67,11 @@ mailonchange <%= @mailonchange %> <%= @threshold %>
 <% end -%>
 
 logdir /var/log/chrony
+<% if @log_enable -%>
+log <%= @log_options %>
+<% else -%>
 #log measurements statistics tracking
+<% end -%>
 
 <% Array(@refclocks).each do |refclock| -%>
 refclock <%= refclock %>

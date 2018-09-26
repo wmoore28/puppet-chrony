@@ -10,16 +10,16 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-# 
+#
 #
 #######################################################################
 ### COMMENTS
@@ -56,7 +56,7 @@ server <%= server %> iburst
 #server 1.nl.pool.ntp.org
 #server 2.nl.pool.ntp.org
 #server 3.nl.pool.ntp.org
- 
+
 # However, for dial-up use you probably want these instead.  The word
 # 'offline' means that the server is not visible at boot time.  Use
 # chronyc's 'online' command to tell chronyd that these servers have
@@ -148,6 +148,14 @@ dumpdir /var/log/chrony
 # backwards), so be careful!
 
 ! initstepslew 10 ntp0.your-company.com ntp1.your-company.com ntp2.your-company.com
+<% if defined?(@initstepslew_seconds) -%>
+# Upon initial bootup, correct the time immediately (if its more than
+# <%= @initstepslew_seconds %> seconds), else use normal time slew
+<% if @initstepslew_servers.is_a?(Hash) then @initstepslew_servers.keys.sort.each do |server| -%>
+initstepslew <%= @initstepslew_seconds %> <%= server %> <%= @initstepslew_servers[server].join(' ') %>
+<% end else Array(@initstepslew_servers).each do |server| -%>
+initstepslew <%= @initstepslew_seconds %> <%= server %>
+<% end end end -%>
 
 #######################################################################
 ### LOGGING
@@ -158,7 +166,12 @@ dumpdir /var/log/chrony
 # need help in debugging a problem.
 
 ! logdir /var/log/chrony
+<% if @log_enable -%>
+logdir /var/log/chrony
+log <%= @log_options %>
+<% else -%>
 ! log measurements statistics tracking
+<% end -%>
 
 # If you have real time clock support enabled (see below), you might want
 # this line instead:
@@ -225,7 +238,7 @@ noclientlog
 
 # The clientlog size is limited to 512KB by default.  If you have many
 # clients, especially in many different subnets, you might want to
-# increase the limit. 
+# increase the limit.
 
 ! clientloglimit 4194304
 <% if defined?(@clientloglimit) -%>

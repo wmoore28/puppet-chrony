@@ -12,6 +12,8 @@ class chrony::params {
   $config_keys_manage = true
   $mailonchange       = undef
   $threshold          = 0.5
+  $log_enable         = false
+  $log_options        = 'measurements statistics tracking'
   $lock_all           = false
   $clientloglimit     = undef
 
@@ -60,7 +62,8 @@ class chrony::params {
     '2.pool.ntp.org' => ['iburst'],
     '3.pool.ntp.org' => ['iburst'],
   }
+  $initstepslew_seconds = 30
+  $initstepslew_servers = undef
   $makestep_seconds = 10
   $makestep_updates = 3
-
 }

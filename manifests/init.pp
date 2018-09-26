@@ -14,11 +14,15 @@ class chrony (
   $package_name                     = $chrony::params::package_name,
   $refclocks                        = $chrony::params::refclocks,
   $servers                          = $chrony::params::servers,
+  $initstepslew_seconds             = $chrony::params::initstepslew_seconds,
+  $initstepslew_servers             = $chrony::params::initstepslew_servers,
   $makestep_seconds                 = $chrony::params::makestep_seconds,
   $makestep_updates                 = $chrony::params::makestep_updates,
   $queryhosts                       = $chrony::params::queryhosts,
   $mailonchange                     = $chrony::params::mailonchange,
   Float $threshold                  = $chrony::params::threshold,
+  $log_enable                       = $chrony::params::log_enable,
+  $log_options                      = $chrony::params::log_options,
   Boolean $lock_all                 = $chrony::params::lock_all,
   $port                             = $chrony::params::port,
   Boolean $clientlog                = $chrony::params::clientlog,
@@ -31,6 +35,10 @@ chrony::params {
 
   if ! $config_keys_manage and $chrony_password != 'unset'  {
     fail("Setting \$config_keys_manage false and \$chrony_password at same time in ${module_name} is not possible.")
+  }
+
+  if $log_enable and $log_options == 'unset' {
+    fail("Setting \$log_enable true, but \$log_options is undef.")
   }
 
   contain '::chrony::install'

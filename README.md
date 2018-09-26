@@ -24,7 +24,7 @@ Manage chrony time daemon on Archlinux and Redhat
 ## Module Description
 
 The Chrony module handles running chrony in Archlinux and Redhat systems
-with systemd. 
+with systemd.
 
 ## Setup
 
@@ -116,9 +116,9 @@ The following parameters are available in the chrony module
 
 #### `chrony_password`
 
-This sets the chrony password to be used in the key file. 
+This sets the chrony password to be used in the key file.
 By default a short fixed string is used. If set explicitly
-to 'unset' then no password will setting will be added 
+to 'unset' then no password will setting will be added
 to the keys file by puppet.
 
 #### `commandkey`
@@ -173,6 +173,15 @@ This determines the name of the package to install.
 This selects the servers to use for ntp peers.  It can be an array of servers
 or a hash of servers to their respective options.
 
+#### `initstepslew_seconds`, `initstepslew_servers`
+
+This configures the `initstepslew` parameter of `chronyd`.  At boot time, if
+the clock error is the specified _seconds_ or less, a slew will be used to
+correct it; if the error is above _seconds_, a step will be used.  The array or
+hash of _servers_ is polled to determine the clock error.
+
+Defaults: _seconds_=30, _servers_=undef
+
 #### `makestep_updates`, `makestep_seconds`
 
 This configures the `makestep` parameter of `chronyd`.
@@ -212,6 +221,12 @@ Specify the mail you wanna alert when chronyd execute a sync grater than thresho
 #### `threshold`
 
 Specify the time limit for triggering events.
+
+#### `log_enable`, `log_options`
+
+This determines if logging is enabled and which options are to be used.  
+
+Defaults _enable_=false, _options_='measurements statistics tracking'
 
 #### `lock_all`
 
